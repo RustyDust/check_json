@@ -248,7 +248,7 @@ if ($np->opts->perfvars) {
             if ($attributes{$key}) {
                 push(@statusmsg, "$label: $attributes{$key}{'check_value'}");
                 $np->add_perfdata(
-                    label => lc $label
+                    label => lc $label,
                     value => $attributes{$key}{'check_value'},
                     threshold => $np->set_thresholds( warning => $attributes{$key}{'warning'}, critical => $attributes{$key}{'critical'}),
                 );
