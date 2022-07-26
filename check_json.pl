@@ -236,15 +236,19 @@ if ($np->opts->perfvars) {
         my $label = (split('->', $key))[-1];
         # make label ascii compatible
         $label =~ s/[^a-zA-Z0-9_-]//g  ;
+
         my $perf_value;
-        $perf_value = $json_response->{$key};
+        my $perf_value_str = '$perf_value = $json_response->'.$key;
+        # $perf_value = $json_response->{$key};
+        eval $perf_value_str;
+
         if ($np->opts->verbose) { print Dumper ("JSON key: ".$label.", JSON val: " . $perf_value) };
         if ( defined($perf_value) ) {
             # add threshold if attribute option matches key
             if ($attributes{$key}) {
                 push(@statusmsg, "$label: $attributes{$key}{'check_value'}");
                 $np->add_perfdata(
-                    label => lc $label,
+                    label => lc $label
                     value => $attributes{$key}{'check_value'},
                     threshold => $np->set_thresholds( warning => $attributes{$key}{'warning'}, critical => $attributes{$key}{'critical'}),
                 );
@@ -267,8 +271,12 @@ if ($np->opts->outputvars) {
         # make label ascii compatible
         $label =~ s/[^a-zA-Z0-9_-]//g;
         my $output_value;
-        $output_value = $json_response->{$key};
-        push(@statusmsg, "$label: $output_value");
+        my $output_value_str = '$output_value = $json_response->'.$key;
+        eval $output_value_str;
+        # $output_value = $json_response->{$key};
+        if ( defined($output_value) ){
+            push(@statusmsg, "$label: $output_value");
+        }
     }
 }
 
